@@ -10,7 +10,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- 顶部：定位状态（中）+ 设置入口（右） -->
+    <!-- 顶部：刷新位置（左）+ 定位状态（中）+ 设置入口（右） -->
+    <TextView
+        android:id="@+id/btn_refresh_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/bg_pill_wait"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="9dp"
+        android:paddingBottom="9dp"
+        android:contentDescription="@string/btn_refresh_location"
+        android:text="@string/btn_refresh_location"
+        android:textColor="@color/wm_text"
+        android:textSize="13sp" />
+
     <TextView
         android:id="@+id/tv_gps_status"
         android:layout_width="wrap_content"

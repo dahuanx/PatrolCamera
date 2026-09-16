@@ -106,22 +106,27 @@ class GpsProvider(private val context: Context) {
             lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
-    /** 开始持续定位；重复调用安全 */
-    fun start() {
+    /**
+     * 开始持续定位；重复调用安全。
+     * @param useLastKnown 是否先用系统"最后已知位置"给出粗略结果（强制刷新时应传 false，避免旧位置立刻回灌）
+     */
+    fun start(useLastKnown: Boolean = true) {
         if (running || !hasPermission()) return
         val lm = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager ?: return
         locationManager = lm
         running = true
 
         // 先取最后一次已知位置，立刻给出粗略结果（仅接受 5 分钟内的缓存，过旧则弃用）
-        try {
-            val last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                ?: lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            if (last != null && System.currentTimeMillis() - last.time <= LAST_KNOWN_MAX_AGE_MS) {
-                onLocation(last)
+        if (useLastKnown) {
+            try {
+                val last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                    ?: lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                if (last != null && System.currentTimeMillis() - last.time <= LAST_KNOWN_MAX_AGE_MS) {
+                    onLocation(last)
+                }
+            } catch (_: SecurityException) {
+                // 权限已检查，理论上不会发生
             }
-        } catch (_: SecurityException) {
-            // 权限已检查，理论上不会发生
         }
 
         val minTime = 1000L
@@ -147,5 +152,16 @@ class GpsProvider(private val context: Context) {
         locationManager?.removeUpdates(listener)
         locationManager = null
         running = false
+    }
+
+    /**
+     * 强制刷新定位：停止监听 → 状态重置为 Waiting（下一条定位无条件接受）→ 重新开始。
+     * LocationResolver 监听 state，会自动回到"定位中…"并随新定位重新解析位置名。
+     */
+    fun restart() {
+        stop()
+        _state.value = GpsState.Waiting
+        lastAcceptAt = 0L
+        start(useLastKnown = false)
     }
 }

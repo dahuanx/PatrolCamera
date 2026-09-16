@@ -5,6 +5,7 @@
     <string name="btn_note">＋ 备注</string>
     <string name="btn_shutter">拍照</string>
     <string name="btn_settings">设置</string>
+    <string name="btn_refresh_location">刷新位置</string>
     <string name="wm_default_tag">巡检</string>
     <string name="wm_default_rest">工作记录</string>
     <string name="wm_placeholder_time">00:00</string>
@@ -25,5 +26,5 @@
     <string name="corner_real_label">真实时间</string>
     <string name="corner_code_default">防伪码 --------</string>
     <string name="settings_section_about">版本说明</string>
-    <string name="version_info">巡查水印相机 v1.2.5\n绥芬河边境经济合作区管理局\n2025组团式援边工作队</string>
+    <string name="version_info">巡查水印相机 v1.2.6\n绥芬河边境经济合作区管理局\n2025组团式援边工作队</string>
 </resources>

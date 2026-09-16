@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnNote: TextView
     private lateinit var btnShutter: View
     private lateinit var btnSettings: ImageView
+    private lateinit var btnRefreshLocation: TextView
     private lateinit var weatherRow: LinearLayout
     private lateinit var ivWeatherIcon: ImageView
     private lateinit var tvWeatherTemp: TextView
@@ -89,6 +90,9 @@ class MainActivity : AppCompatActivity() {
     private var currentNote: String? = null
     private var capturing = false
     private var weatherLoading = false
+
+    /** 上次点"刷新位置"的时间戳（2 秒冷却防连点） */
+    private var lastRefreshTapAt = 0L
 
     private val clockFmtTime = SimpleDateFormat("HH:mm", Locale.CHINA)
     private val clockFmtDate = SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA)
@@ -130,6 +134,7 @@ class MainActivity : AppCompatActivity() {
         tvWeatherDesc = findViewById(R.id.tv_weather_desc)
         cornerBox = findViewById(R.id.corner_box)
         tvCornerCode = findViewById(R.id.tv_corner_code)
+        btnRefreshLocation = findViewById(R.id.btn_refresh_location)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
         shutterSound = MediaActionSound()
@@ -152,6 +157,22 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
         tvWmLocation.setOnClickListener { showLocationNamingDialog() }
+        // 强制刷新位置：重置定位状态并重新监听（2 秒冷却防连点）
+        btnRefreshLocation.setOnClickListener {
+            val now = System.currentTimeMillis()
+            if (now - lastRefreshTapAt < 2000L) return@setOnClickListener
+            lastRefreshTapAt = now
+            if (!gps.hasPermission()) {
+                requestPermissionsAndStart()
+                return@setOnClickListener
+            }
+            if (!gps.isGpsEnabled()) {
+                Toast.makeText(this, "定位服务未开启，请到系统设置打开定位", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            gps.restart()
+            Toast.makeText(this, "正在重新定位…", Toast.LENGTH_SHORT).show()
+        }
 
         // 时间校准（设置页连点版本说明 5 次解锁后可用）
         val timeEditListener = View.OnClickListener {
