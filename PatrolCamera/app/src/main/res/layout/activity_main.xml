@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/viewfinder_bg"
+    android:keepScreenOn="true">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 顶部：定位状态（中）+ 设置入口（右） -->
+    <TextView
+        android:id="@+id/tv_gps_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_pill_wait"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/gps_waiting"
+        android:textColor="@color/wm_text"
+        android:textSize="13sp" />
+
+    <ImageView
+        android:id="@+id/btn_settings"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/btn_settings"
+        android:padding="8dp"
+        android:src="@drawable/ic_settings" />
+
+    <!-- 左下角：实时水印预览（与成片水印同构） -->
+    <LinearLayout
+        android:id="@+id/wm_root"
+        android:layout_width="236dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="104dp"
+        android:background="@drawable/bg_watermark"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="13dp">
+
+        <!-- 标题行：黄色块（前两字）+ 白色标题（居中占满剩余宽度） -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_wm_title_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_title_tag"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:text="@string/wm_default_tag"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_wm_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="7dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/wm_default_rest"
+                android:textColor="@color/wm_text"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 黄色虚线分隔 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="7dp"
+            android:background="@drawable/bg_dash_line" />
+
+        <!-- 时间行：时间左对齐 + 日期右对齐 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_wm_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/wm_placeholder_time"
+                android:textColor="@color/wm_text"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_wm_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:gravity="end"
+                android:maxLines="1"
+                android:text="@string/wm_placeholder_date"
+                android:textColor="@color/wm_text"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- 位置行（点击可手动命名；最多 3 行显示） -->
+        <TextView
+            android:id="@+id/tv_wm_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:background="?attr/selectableItemBackground"
+            android:drawableStart="@drawable/ic_wm_pin"
+            android:drawablePadding="5dp"
+            android:maxLines="3"
+            android:text="@string/gps_waiting"
+            android:textColor="@color/wm_text"
+            android:textSize="13sp" />
+
+        <!-- 天气行（与成片卡片内天气行同位置：位置行下方、备注行上方；设置中可开关） -->
+        <LinearLayout
+            android:id="@+id/weather_row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/iv_weather_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@string/settings_section_weather"
+                android:src="@drawable/ic_w_cloudy" />
+
+            <TextView
+                android:id="@+id/tv_weather_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:maxLines="1"
+                android:text="@string/weather_desc_placeholder"
+                android:textColor="@color/wm_text"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_weather_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:text="@string/weather_temp_placeholder"
+                android:textColor="@color/wm_text"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_wm_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/wm_note"
+            android:textSize="12sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- 右下角：真实时间 + 防伪码（右对齐、白字带阴影、无背景）。
+         放到底部操作栏一行（避开左侧水印卡片的横向区间），彻底消除竖屏下的重叠 -->
+    <LinearLayout
+        android:id="@+id/corner_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="36dp"
+        android:gravity="end"
+        android:orientation="vertical">
+
+        <!-- 真实时间：仅作标识字样，说明防伪码对应的是照片真实拍摄时刻 -->
+        <TextView
+            android:id="@+id/tv_corner_real"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:shadowColor="#CC000000"
+            android:shadowDx="0"
+            android:shadowDy="1"
+            android:shadowRadius="3"
+            android:text="@string/corner_real_label"
+            android:textColor="@color/wm_text"
+            android:textSize="17sp" />
+
+        <!-- 防伪码：由真实时间 + 坐标 + 标题 + 备注生成，等宽字体 -->
+        <TextView
+            android:id="@+id/tv_corner_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="monospace"
+            android:maxLines="1"
+            android:shadowColor="#CC000000"
+            android:shadowDx="0"
+            android:shadowDy="1"
+            android:shadowRadius="3"
+            android:text="@string/corner_code_default"
+            android:textColor="#E6FFFFFF"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- 底部：备注 + 快门 -->
+    <TextView
+        android:id="@+id/btn_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="36dp"
+        android:background="@drawable/bg_pill_note"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
+        android:paddingTop="9dp"
+        android:paddingBottom="9dp"
+        android:text="@string/btn_note"
+        android:textColor="@color/wm_text"
+        android:textSize="14sp" />
+
+    <FrameLayout
+        android:id="@+id/btn_shutter"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/bg_shutter_ring"
+        android:contentDescription="@string/btn_shutter">
+
+        <View
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_shutter_core" />
+    </FrameLayout>
+
+</FrameLayout>

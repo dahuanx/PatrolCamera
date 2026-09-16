@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 取景背景（黑） -->
+    <color name="viewfinder_bg">#111111</color>
+    <!-- 水印文字（白） -->
+    <color name="wm_text">#FFFFFF</color>
+    <color name="wm_text_dim">#D9FFFFFF</color>
+    <!-- 水印备注（淡黄） -->
+    <color name="wm_note">#FFE082</color>
+    <!-- 定位状态胶囊：成功 / 等待 -->
+    <color name="pill_ok_bg">#B30F6E56</color>
+    <color name="pill_wait_bg">#96000000</color>
+    <!-- 应用图标背景（墨绿） -->
+    <color name="launcher_bg">#0F6E56</color>
+</resources>

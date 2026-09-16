@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">巡查水印相机</string>
+    <string name="gps_waiting">定位中…</string>
+    <string name="btn_note">＋ 备注</string>
+    <string name="btn_shutter">拍照</string>
+    <string name="btn_settings">设置</string>
+    <string name="wm_default_tag">巡检</string>
+    <string name="wm_default_rest">工作记录</string>
+    <string name="wm_placeholder_time">00:00</string>
+    <string name="wm_placeholder_date">0000年00月00日</string>
+
+    <string name="settings_section_title">巡查标题名称（前两字进黄色标签，其余为白色标题）</string>
+    <string name="settings_title_hint">如：工作记录</string>
+    <string name="settings_save">保存标题</string>
+    <string name="settings_section_custom">自定义位置名（20 米范围内拍照时自动显示）</string>
+    <string name="settings_custom_empty">暂无自定义位置名，点击下方按钮添加</string>
+    <string name="settings_add_custom">＋ 添加自定义位置名</string>
+    <string name="settings_clear_custom">清空全部自定义位置名</string>
+    <string name="settings_section_weather">天气显示</string>
+    <string name="settings_weather_label">在拍照页右下角显示天气</string>
+    <string name="settings_weather_hint">显示当前所在地天气图标与气温，需联网获取；无网络时自动隐藏</string>
+    <string name="weather_temp_placeholder">--℃</string>
+    <string name="weather_desc_placeholder">--</string>
+    <string name="corner_real_label">真实时间</string>
+    <string name="corner_code_default">防伪码 --------</string>
+    <string name="settings_section_about">版本说明</string>
+    <string name="version_info">巡查水印相机 v1.2.5\n绥芬河边境经济合作区管理局\n2025组团式援边工作队</string>
+</resources>
