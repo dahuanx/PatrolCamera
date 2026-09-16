@@ -21,6 +21,7 @@ captures/
 
 # APK 成品（通过 GitHub Releases 发布，不进仓库）
 APK/
+/*.apk
 
 # 开发过程中的临时预览文件
 新建文本文档*.html
