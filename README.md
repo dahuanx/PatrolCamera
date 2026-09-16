@@ -27,6 +27,8 @@
 
 无需构建，直接在手机浏览器打开下面的链接下载安装即可（首次安装需允许"安装未知来源应用"）：
 
+**国内用户推荐（Gitee 直连，速度快）：[Gitee 下载 v1.2.6](https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.2.6/PatrolCamera-v1.2.6.apk)**
+
 **最新正式版：[v1.2.6](https://github.com/dahuanx/PatrolCamera/releases/latest)**
 
 | 版本 | 下载 | 说明 |
