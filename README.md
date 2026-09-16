@@ -25,7 +25,17 @@
 
 ## 如何下载安装（普通用户）
 
-无需构建，直接到本仓库的 **Releases** 页面下载最新版 APK，安装到安卓手机即可。
+无需构建，直接在手机浏览器打开下面的链接下载安装即可（首次安装需允许"安装未知来源应用"）：
+
+**最新正式版：[v1.2.6](https://github.com/dahuanx/PatrolCamera/releases/latest)**
+
+| 版本 | 下载 | 说明 |
+|---|---|---|
+| v1.2.6 | [PatrolCamera-v1.2.6.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.6/PatrolCamera-v1.2.6.apk) | 新增拍照页「刷新位置」按钮，支持强制重新定位 |
+
+全部历史版本见 [Releases](https://github.com/dahuanx/PatrolCamera/releases)。
+
+> 说明：受 GitHub 附件命名限制，安装包在发布页显示为英文名 `PatrolCamera-vX.Y.Z.apk`，内容即对应中文版本号。
 
 ## 目录结构
 
@@ -34,14 +44,16 @@
 ├── PatrolCamera/        # Android 工程源码
 │   ├── app/src/main/    # 应用代码与资源
 │   └── ...
-└── APK/                 # 各版本成品 APK（不进 Git，见 Releases）
+└── APK/                 # 各版本成品 APK（不进 Git，统一走 Releases 发布）
 ```
 
 ## 版本记录
 
 | 版本 | 说明 |
 |---|---|
-| v1.2.x | 正式版，持续迭代中 |
+| v1.2.6 | 拍照页新增「刷新位置」按钮，可强制重新定位（丢弃旧缓存位置），2 秒冷却防连点 |
+| v1.2.5 | 修复成片水印标题不居中 |
+| v1.2.1 及更早 | 点位库、天气、防伪码等基础功能建设 |
 
 ## 许可证
 
