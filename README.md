@@ -28,12 +28,13 @@
 
 无需构建，直接在手机浏览器打开下面的链接下载安装即可（首次安装需允许"安装未知来源应用"）：
 
-**国内用户推荐（Gitee 直连，速度快）：[Gitee 下载 v1.2.7](https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.2.7/PatrolCamera-v1.2.7.apk)**
+**国内用户推荐（Gitee 直连，速度快）：[Gitee 下载 v1.2.8](https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.2.8/PatrolCamera-v1.2.8.apk)**
 
-**最新正式版：[v1.2.7](https://github.com/dahuanx/PatrolCamera/releases/latest)**
+**最新正式版：[v1.2.8](https://github.com/dahuanx/PatrolCamera/releases/latest)**
 
 | 版本 | 下载 | 说明 |
 |---|---|---|
+| v1.2.8 | [PatrolCamera-v1.2.8.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.8/PatrolCamera-v1.2.8.apk) | 在线地名自动加省、地市、县区三级行政区前缀 |
 | v1.2.7 | [PatrolCamera-v1.2.7.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.7/PatrolCamera-v1.2.7.apk) | 接入天地图在线地名，点位库未命中时自动解析真实地名 |
 | v1.2.6 | [PatrolCamera-v1.2.6.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.6/PatrolCamera-v1.2.6.apk) | 新增拍照页「刷新位置」按钮，支持强制重新定位 |
 
@@ -55,6 +56,7 @@
 
 | 版本 | 说明 |
 |---|---|
+| v1.2.8 | 在线地名自动加「省＋地市＋县区」三级行政区前缀（如"黑龙江省牡丹江市绥芬河市 宽沟路 东南约282米"）；库内点位名保持原样不加前缀 |
 | v1.2.7 | 接入天地图在线地名（WGS-84 直传不转换）；地名智能清洗与距离分级；设置页新增「在线地名」开关与自定义 Key；同区域 20 分钟内缓存 |
 | v1.2.6 | 拍照页新增「刷新位置」按钮，可强制重新定位（丢弃旧缓存位置），2 秒冷却防连点 |
 | v1.2.5 | 修复成片水印标题不居中 |

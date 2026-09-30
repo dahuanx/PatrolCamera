@@ -26,7 +26,11 @@ import java.util.Locale
  * ── 名称质量（同批实测） ─────────────────────────────────────────
  * 天地图在绥芬河这类边境小城的 POI 密度有限，会返回 "ZR01"、"S206" 这类无意义编号，
  * 或隔壁企业名。因此 [buildName] 做了清洗：POI 必须含中文字符才算有效、距离过远则降级，
- * 最后回退到"区县+乡镇"。地名主力仍是 App 内置的离线点位库。
+ * 最后回退到行政区。地名主力仍是 App 内置的离线点位库。
+ *
+ * ── 行政区前缀 ──────────────────────────────────────────────
+ * 本路径（点库未命中的兜底）输出的地名**带省、地市、县区前缀**，如
+ * `黑龙江省牡丹江市绥芬河市 宽沟路 东南约282米`；库内点位名不加前缀（同县区重复无意义）。
  *
  * 申请/更换 Key：天地图控制台 → 创建应用（**应用类型必须选"服务端"**，移动端/浏览器端 Key 调不了本接口）
  * → 复制 tk 填入设置页"在线地名 Key"，或在下方 TIANDITU_KEY_DEFAULT 内置。
@@ -128,14 +132,23 @@ object ReverseGeocoder {
     }
 
     /**
-     * 从天地图返回结果中挑一个适合进水印的地名：
-     *   1. POI 名含中文且距离 ≤ 500m → 近距离直接用名，略远则加方位与距离（"森鑫木业有限公司 东南约146米"）
-     *   2. 最近地点 address（含中文）→ 直接用
-     *   3. 区县 + 乡镇（"绥芬河市阜宁镇"）
-     *   4. 原始 formatted_address
+     * 从天地图返回结果中挑一个适合进水印的地名，**带省、地市、县区前缀**。
+     *
+     * 输出规则：
+     *   1. POI 名含中文且距离 ≤ 500m → 近距离直接用名、略远带方位距离
+     *   2. 最近地点 address（含中文）
+     *   3. 都没有时只报行政区（省 + 地市 + 县区 + 乡镇）
+     * 例：`黑龙江省牡丹江市绥芬河市 宽沟路 东南约282米`
+     *
+     * 注意（2026-09-30 洲哥明确要求）：**只有在线这一路加行政区，库内点位名保持原样**——
+     * 51 个离线点位全在同一县区，逐张拼省市区纯属重复；库外（点位未命中）才需要属地信息。
      */
     private fun buildName(result: JSONObject): String? {
         val comp = result.optJSONObject("addressComponent")
+        val province = comp?.optString("province").orEmpty().trim()
+        val city = comp?.optString("city").orEmpty().trim()
+        val county = comp?.optString("county").orEmpty().trim()
+        val town = comp?.optString("town").orEmpty().trim()
         val poi = comp?.optString("poi").orEmpty().trim()
         // 官方文档拼写不一致（poi_distince / poi_distance），两种都兼容
         val poiDist = if (comp?.has("poi_distance") == true) {
@@ -145,23 +158,51 @@ object ReverseGeocoder {
         }
         val poiPos = comp?.optString("poi_position").orEmpty().trim()
         val address = comp?.optString("address").orEmpty().trim()
-        val county = comp?.optString("county").orEmpty().trim()
-        val town = comp?.optString("town").orEmpty().trim()
+        val formatted = result.optString("formatted_address").trim()
 
-        if (isMeaningful(poi) && (poiDist < 0 || poiDist <= POI_MAX_RELEVANT_M)) {
-            return when {
-                poiDist in 0..60 || poiPos.isBlank() -> poi
+        val admin = joinAdmin(province, city, county)
+
+        val place = when {
+            isMeaningful(poi) && (poiDist < 0 || poiDist <= POI_MAX_RELEVANT_M) ->
                 // 注意：中文字符在 Kotlin 里属于合法标识符字符，紧跟变量的中文必须用 ${} 包住，
                 // 否则 "$poiPos约" 会被当成变量名 poiPos约 → Unresolved reference
-                else -> "$poi ${poiPos}约${poiDist}米"
-            }
+                if (poiDist in 0..60 || poiPos.isBlank()) poi else "$poi ${poiPos}约${poiDist}米"
+            isMeaningful(address) && address != poi -> address
+            else -> null
         }
-        if (isMeaningful(address) && address != poi) return address
 
-        val admin = listOf(county, town).filter { it.isNotBlank() }.joinToString("")
-        if (admin.isNotBlank()) return admin
+        if (place == null) {
+            // 连具体地点都没有 → 只报行政区（细到乡镇），再不行用天地图原始地址
+            return joinAdmin(province, city, county, town)
+                .ifBlank { formatted.takeIf { it.isNotBlank() } }
+        }
+        val clean = stripAdminPrefix(place, county)
+        return listOf(admin, clean)
+            .filter { it.isNotBlank() }
+            .joinToString(" ")
+            .takeIf { it.isNotBlank() }
+    }
 
-        return result.optString("formatted_address").trim().takeIf { it.isNotBlank() }
+    /** 拼接行政区名：跳过空值、去掉相邻重复（如直辖市"北京市北京市"只留一个） */
+    private fun joinAdmin(vararg parts: String): String {
+        var out = ""
+        for (p in parts) {
+            val s = p.trim()
+            if (s.isEmpty() || s == out) continue
+            out += s
+        }
+        return out
+    }
+
+    /**
+     * 地名开头若与县区名重复则去掉该前缀：
+     * "绥芬河市边境经济合作区"（天地图常这么返回）→ "边境经济合作区"。
+     * 剩余不足 4 字则保留原样，避免把"绥芬河市人民政府"裁成"人民政府"。
+     */
+    private fun stripAdminPrefix(place: String, county: String): String {
+        if (county.isBlank() || !place.startsWith(county)) return place
+        val rest = place.removePrefix(county).trim()
+        return if (rest.length >= 4) rest else place
     }
 
     /** 有效地名：至少含一个中文字符（用于滤掉 "ZR01"、"S206" 这类无意义编号） */
