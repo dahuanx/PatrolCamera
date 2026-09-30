@@ -17,7 +17,7 @@ import java.util.Locale
  * 解析优先级（在 IO 线程执行，结果缓存供拍照瞬间直接取用）：
  *   1. 自定义地名库命中（20 米内，用户手动命名过）→ 自定义地名
  *   2. 离线点位库命中 → 规范点位名（如"万鸿利通北门"）
- *   3. 点位库未命中且配置了高德 Key → 在线逆地理地名
+ *   3. 点位库未命中 → 在线逆地理地名（天地图，设置页可开关）
  *   4. 均不可用 → 经纬度兜底
  */
 class LocationResolver(
@@ -50,8 +50,8 @@ class LocationResolver(
                 PointMatcher.match(state.lat, state.lng, points)?.let { (p, _) ->
                     return@withContext p.name
                 }
-                // 3) 在线逆地理（未配置 Key 时内部直接返回 null）
-                ReverseGeocoder.reverse(state.lat, state.lng)?.let { return@withContext it }
+                // 3) 在线逆地理（天地图 WGS-84 直传；开关关闭、无网络或解析失败时返回 null）
+                ReverseGeocoder.reverse(context, state.lat, state.lng)?.let { return@withContext it }
                 // 4) 经纬度兜底
                 String.format(Locale.CHINA, "%.5f, %.5f", state.lat, state.lng)
             }

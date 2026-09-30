@@ -24,9 +24,11 @@ import java.util.Locale
 /**
  * 设置页：
  *   1. 巡查标题名称编辑（框线输入框，黑色文字，持久化 SharedPreferences）
- *   2. 自定义位置名列表（显示名称+坐标，可手动添加 / 修改 / 单条删除 / 一键清空；
+ *   2. 天气显示开关（水印卡片内的天气行）
+ *   3. 在线地名：开关 + 天地图服务端 Key（留空用内置 Key），点位库未命中时取真实地名
+ *   4. 自定义位置名列表（显示名称+坐标，可手动添加 / 修改 / 单条删除 / 一键清空；
  *      添加时自动预填当前位置坐标）
- *   3. 版本说明（"2025组团式援边工作队"连续点击 5 次 → 解锁拍照页时间校准功能）
+ *   5. 版本说明（"2025组团式援边工作队"连续点击 5 次 → 解锁拍照页时间校准功能）
  */
 class SettingsActivity : AppCompatActivity() {
 
@@ -36,6 +38,8 @@ class SettingsActivity : AppCompatActivity() {
         const val KEY_TIME_EDIT_UNLOCKED = "time_edit_unlocked"
         const val KEY_MANUAL_DATETIME = "manual_datetime"
         const val KEY_SHOW_WEATHER = "show_weather"
+        const val KEY_SHOW_ONLINE_GEO = "show_online_geo"
+        const val KEY_ONLINE_GEO_KEY = "online_geo_key"
         const val DEFAULT_TITLE = "巡检工作记录"
 
         fun loadTitle(context: Context): String =
@@ -78,6 +82,33 @@ class SettingsActivity : AppCompatActivity() {
             context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                 .edit().putBoolean(KEY_SHOW_WEATHER, enabled).apply()
         }
+
+        /** 是否启用在线地名（天地图逆地理，默认开启）；关闭后点位库未命中时直接显示经纬度 */
+        fun isOnlineGeoEnabled(context: Context): Boolean =
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .getBoolean(KEY_SHOW_ONLINE_GEO, true)
+
+        fun setOnlineGeoEnabled(context: Context, enabled: Boolean) {
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit().putBoolean(KEY_SHOW_ONLINE_GEO, enabled).apply()
+        }
+
+        /** 用户在设置页自定义的天地图 Key（可能为空；为空表示用内置 Key） */
+        fun customGeoKey(context: Context): String =
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .getString(KEY_ONLINE_GEO_KEY, null)?.trim().orEmpty()
+
+        /** 实际生效的天地图 Key：自定义优先，否则回退内置默认 */
+        fun onlineGeoKey(context: Context): String =
+            customGeoKey(context).ifBlank { ReverseGeocoder.TIANDITU_KEY_DEFAULT }
+
+        /** 保存自定义 Key；传空字符串则清除（恢复使用内置 Key） */
+        fun setCustomGeoKey(context: Context, key: String) {
+            val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            val k = key.trim()
+            if (k.isEmpty()) prefs.edit().remove(KEY_ONLINE_GEO_KEY).apply()
+            else prefs.edit().putString(KEY_ONLINE_GEO_KEY, k).apply()
+        }
     }
 
     private lateinit var edtTitleTag: EditText
@@ -112,7 +143,30 @@ class SettingsActivity : AppCompatActivity() {
             setWeatherEnabled(this, checked)
             Toast.makeText(
                 this,
-                if (checked) "已在拍照页显示天气" else "已关闭天气显示",
+                if (checked) "已在水印中显示天气" else "已关闭天气显示",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        // 在线地名：点位库未命中时调天地图逆地理接口取真实地名
+        val edtGeoKey = findViewById<EditText>(R.id.edt_geo_key)
+        edtGeoKey.setText(customGeoKey(this))
+        val swOnlineGeo = findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.sw_online_geo)
+        swOnlineGeo.isChecked = isOnlineGeoEnabled(this)
+        swOnlineGeo.setOnCheckedChangeListener { _, checked ->
+            setOnlineGeoEnabled(this, checked)
+            Toast.makeText(
+                this,
+                if (checked) "已启用在线地名（需联网）" else "已关闭在线地名，将只显示点位或经纬度",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        findViewById<Button>(R.id.btn_save_geo_key).setOnClickListener {
+            setCustomGeoKey(this, edtGeoKey.text.toString())
+            ReverseGeocoder.clearCache()
+            Toast.makeText(
+                this,
+                if (edtGeoKey.text.toString().isBlank()) "已恢复使用内置 Key" else "已保存自定义 Key",
                 Toast.LENGTH_SHORT
             ).show()
         }

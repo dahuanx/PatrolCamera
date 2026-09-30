@@ -19,12 +19,17 @@
     <string name="settings_add_custom">＋ 添加自定义位置名</string>
     <string name="settings_clear_custom">清空全部自定义位置名</string>
     <string name="settings_section_weather">天气显示</string>
-    <string name="settings_weather_label">在拍照页右下角显示天气</string>
-    <string name="settings_weather_hint">显示当前所在地天气图标与气温，需联网获取；无网络时自动隐藏</string>
+    <string name="settings_weather_label">在水印中显示天气</string>
+    <string name="settings_weather_hint">在位置名称下方显示天气图标与气温，需联网获取；无网络时自动省略</string>
+    <string name="settings_section_geo">在线地名（天地图）</string>
+    <string name="settings_geo_label">点位未命中时联网获取地名</string>
+    <string name="settings_geo_hint">调用天地图逆地理接口，需联网；无网络或失败时显示经纬度</string>
+    <string name="settings_geo_key_hint">天地图服务端 Key（留空使用内置）</string>
+    <string name="settings_save_geo_key">保存 Key</string>
     <string name="weather_temp_placeholder">--℃</string>
     <string name="weather_desc_placeholder">--</string>
     <string name="corner_real_label">真实时间</string>
     <string name="corner_code_default">防伪码 --------</string>
     <string name="settings_section_about">版本说明</string>
-    <string name="version_info">巡查水印相机 v1.2.6\n绥芬河边境经济合作区管理局\n2025组团式援边工作队</string>
+    <string name="version_info">巡查水印相机 v1.2.7\n绥芬河边境经济合作区管理局\n2025组团式援边工作队</string>
 </resources>
