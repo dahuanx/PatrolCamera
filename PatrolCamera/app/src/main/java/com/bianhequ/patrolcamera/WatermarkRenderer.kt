@@ -22,8 +22,9 @@ import java.util.Locale
  *   2. 黄色三角虚线分隔
  *   3. 时间行：超大 "HH:mm" + 右侧 "yyyy年MM月dd日"
  *   4. 位置行：白色定位 pin + 位置名称（自动换行，最多 3 行）
- *   5. 天气行（可选）：天气图标 + "多云 14℃"（设置中可开关，无网络时自动省略）
- *   6. 现场备注（可选，淡黄色，最多 2 行）
+ *   5. 经纬度行（可选）：系统真实 GPS 坐标（设置中可开关，未定位成功时整行省略）
+ *   6. 天气行（可选）：天气图标 + "多云 14℃"（设置中可开关，无网络时自动省略）
+ *   7. 现场备注（可选，淡黄色，最多 2 行）
  *
  * 右下角独立两行（卡片之外，右对齐、带阴影、无背景）：
  *   真实时间（仅"真实时间"标识字样，不显示具体时间）→ 防伪码；底边固定 h-44u。
@@ -38,6 +39,7 @@ object WatermarkRenderer {
     private const val COLOR_WHITE = 0xFFFFFFFF.toInt()
     private const val COLOR_BLACK = 0xFF1A1A1A.toInt()
     private const val COLOR_NOTE = 0xFFFFE082.toInt() // 备注淡黄
+    private const val COLOR_WHITE_DIM = 0xD9FFFFFF.toInt() // 坐标行（略暗白，区别于位置名）
     private const val SHADOW_COLOR = 0xCC000000.toInt() // 右下角白字阴影
 
     fun render(
@@ -48,6 +50,7 @@ object WatermarkRenderer {
         noteText: String?,
         weatherIcon: Bitmap? = null,
         weatherText: String? = null,
+        coordinateText: String? = null,
         realTimeText: String? = null,
         codeText: String? = null
     ): Bitmap {
@@ -74,6 +77,7 @@ object WatermarkRenderer {
         val fLoc = 34f * u
         val fNote = 27f * u
         val fWea = 32f * u
+        val fCoord = 28f * u
         val weaIcon = 42f * u
         val pinSize = 38f * u
         val pinGap = 12f * u
@@ -88,6 +92,7 @@ object WatermarkRenderer {
         val paintLoc = textPaint(COLOR_WHITE, fLoc)
         val paintNote = textPaint(COLOR_NOTE, fNote)
         val paintWea = textPaint(COLOR_WHITE, fWea)
+        val paintCoord = textPaint(COLOR_WHITE_DIM, fCoord).apply { typeface = Typeface.MONOSPACE }
 
         // ---- 测量：由内容决定卡片宽 ----
         val tagW = paintTitleTag.measureText(tagText) + tagPadH * 2
@@ -116,9 +121,12 @@ object WatermarkRenderer {
 
         val showWeather = !weatherText.isNullOrBlank()
         val weaRowH = maxOf(weaIcon, fWea * 1.2f)
+        val showCoord = !coordinateText.isNullOrBlank()
+        val coordH = fCoord * 1.25f
 
         var contentH = padTop + tagH + gapTitleDash + dashH + gapDashTime +
             timeH + gapTimeLoc + locLayout.height
+        if (showCoord) contentH += gapLocNote + coordH
         if (showWeather) contentH += gapLocNote + weaRowH
         if (noteLayout != null) contentH += gapLocNote + noteLayout.height
         contentH += padBottom
@@ -152,13 +160,13 @@ object WatermarkRenderer {
             val restBaseline = y + tagH / 2f - (fmRest.ascent + fmRest.descent) / 2f
             // 余字在"黄块右缘 → 卡片右内边距"的剩余区域内水平居中（与预览 tv_wm_title 一致）；
             // 文字宽超过剩余区域时不居中，退化为紧贴黄块右侧，避免溢出卡片。
-            val restW = paintTitleRest.measureText(restText)
+            val restTextW = paintTitleRest.measureText(restText)
             val restLeft = x + tagW + 14f * u
             val restRight = left + cardW - pad
-            val restCx = if (restW >= restRight - restLeft) {
-                restLeft + restW / 2f
+            val restCx = if (restTextW >= restRight - restLeft) {
+                restLeft + restTextW / 2f
             } else {
-                ((restLeft + restRight) / 2f).coerceIn(restLeft + restW / 2f, restRight - restW / 2f)
+                ((restLeft + restRight) / 2f).coerceIn(restLeft + restTextW / 2f, restRight - restTextW / 2f)
             }
             paintTitleRest.textAlign = Paint.Align.CENTER
             canvas.drawText(restText, restCx, restBaseline, paintTitleRest)
@@ -192,7 +200,15 @@ object WatermarkRenderer {
         canvas.restore()
         y += locLayout.height
 
-        // 5) 天气行：图标 + "多云 14℃"（可选）
+        // 5) 经纬度坐标行（可选）：系统真实 GPS 坐标；左缘与位置名称文字对齐
+        if (showCoord) {
+            y += gapLocNote
+            val fmCoord = paintCoord.fontMetrics
+            canvas.drawText(coordinateText!!, x + pinSize + pinGap, y - fmCoord.ascent, paintCoord)
+            y += coordH
+        }
+
+        // 6) 天气行：图标 + "多云 14℃"（可选）
         if (showWeather) {
             y += gapLocNote
             val iconTop = y + (weaRowH - weaIcon) / 2f
@@ -210,7 +226,7 @@ object WatermarkRenderer {
             y += weaRowH
         }
 
-        // 6) 现场备注（可选）
+        // 7) 现场备注（可选）
         if (noteLayout != null) {
             y += gapLocNote
             canvas.save()
@@ -219,7 +235,7 @@ object WatermarkRenderer {
             canvas.restore()
         }
 
-        // 7) 右下角两行：真实时间（仅标识字样）→ 防伪码
+        // 8) 右下角两行：真实时间（仅标识字样）→ 防伪码
         //    全部右对齐、白字带阴影、无背景；自底边（h - 44u）向上排布，
         //    某行内容为空则整行跳过，其余行位置保持不变。天气已移入卡片内部，此处不再绘制。
         val fCornerReal = 32f * u

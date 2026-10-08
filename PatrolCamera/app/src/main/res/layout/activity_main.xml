@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- 顶部：刷新位置（左）+ 定位状态（中）+ 设置入口（右） -->
+    <!-- 顶部：刷新位置（左）+ 定位状态（中）+ 设置入口（右）
+         （"导入照片"入口已移到右下角"真实时间"上方，避免竖屏下与定位状态文字重叠） -->
     <TextView
         android:id="@+id/btn_refresh_location"
         android:layout_width="wrap_content"
@@ -157,6 +158,20 @@
             android:textColor="@color/wm_text"
             android:textSize="13sp" />
 
+        <!-- 经纬度坐标行（系统真实 GPS 坐标，与位置名解析路径无关；设置中可开关，未定位成功时隐藏）
+             左缩进 21dp = pin 宽 16dp + drawablePadding 5dp，与上方位置名称文字左缘对齐 -->
+        <TextView
+            android:id="@+id/tv_wm_coordinate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="monospace"
+            android:maxLines="1"
+            android:paddingStart="21dp"
+            android:textColor="@color/wm_text_dim"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
         <!-- 天气行（与成片卡片内天气行同位置：位置行下方、备注行上方；设置中可开关） -->
         <LinearLayout
             android:id="@+id/weather_row"
@@ -209,7 +224,7 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <!-- 右下角：真实时间 + 防伪码（右对齐、白字带阴影、无背景）。
+    <!-- 右下角：导入照片（仅隐藏功能模式可见）+ 真实时间 + 防伪码（右对齐、白字带阴影、无背景）。
          放到底部操作栏一行（避开左侧水印卡片的横向区间），彻底消除竖屏下的重叠 -->
     <LinearLayout
         android:id="@+id/corner_box"
@@ -220,6 +235,18 @@
         android:layout_marginBottom="36dp"
         android:gravity="end"
         android:orientation="vertical">
+
+        <!-- 隐藏功能模式专属：从相册选一张照片，按当前设定的时间/位置补上水印 -->
+        <ImageView
+            android:id="@+id/btn_import_photo"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_pill_wait"
+            android:contentDescription="@string/btn_import_photo"
+            android:padding="10dp"
+            android:src="@drawable/ic_import_photo"
+            android:visibility="gone" />
 
         <!-- 真实时间：仅作标识字样，说明防伪码对应的是照片真实拍摄时刻 -->
         <TextView

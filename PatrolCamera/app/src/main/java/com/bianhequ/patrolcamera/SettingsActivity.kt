@@ -25,10 +25,15 @@ import java.util.Locale
  * 设置页：
  *   1. 巡查标题名称编辑（框线输入框，黑色文字，持久化 SharedPreferences）
  *   2. 天气显示开关（水印卡片内的天气行）
- *   3. 在线地名：开关 + 天地图服务端 Key（留空用内置 Key），点位库未命中时取真实地名
- *   4. 自定义位置名列表（显示名称+坐标，可手动添加 / 修改 / 单条删除 / 一键清空；
+ *   3. 经纬度坐标开关（水印卡片内的 GPS 坐标行，默认开启）
+ *   4. 在线地名：开关 + 天地图服务端 Key（留空用内置 Key），点位库未命中时取真实地名
+ *   5. 自定义位置名列表（显示名称+坐标，可手动添加 / 修改 / 单条删除 / 一键清空；
  *      添加时自动预填当前位置坐标）
- *   5. 版本说明（"2025组团式援边工作队"连续点击 5 次 → 解锁拍照页时间校准功能）
+ *   6. 版本说明（"2025组团式援边绥芬河工作队"连续点击 5 次 → 开 / 关"隐藏功能模式"）：
+ *      开启时：① 拍照页点击水印上的时间/日期可临时校准巡查时间；
+ *              ② 点击位置名称可手动填写 / 修改坐标、选择自定义位置（正常模式下只能改名，改不了坐标）；
+ *              ③ 拍照页右下角"真实时间"上方出现「导入照片」图标，可给相册里已有的照片按当前设定补上水印；
+ *      关闭时：一并清除已设置的临时校准时间，并放弃手填坐标 / 自定义位置
  */
 class SettingsActivity : AppCompatActivity() {
 
@@ -38,6 +43,7 @@ class SettingsActivity : AppCompatActivity() {
         const val KEY_TIME_EDIT_UNLOCKED = "time_edit_unlocked"
         const val KEY_MANUAL_DATETIME = "manual_datetime"
         const val KEY_SHOW_WEATHER = "show_weather"
+        const val KEY_SHOW_COORDINATE = "show_coordinate"
         const val KEY_SHOW_ONLINE_GEO = "show_online_geo"
         const val KEY_ONLINE_GEO_KEY = "online_geo_key"
         const val DEFAULT_TITLE = "巡检工作记录"
@@ -49,6 +55,12 @@ class SettingsActivity : AppCompatActivity() {
         fun isTimeEditUnlocked(context: Context): Boolean =
             context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                 .getBoolean(KEY_TIME_EDIT_UNLOCKED, false)
+
+        /** 开 / 关"隐藏功能模式"（拍照页时间校准 + 位置名称手动改坐标 / 选自定义位置的解锁状态） */
+        fun setTimeEditUnlocked(context: Context, unlocked: Boolean) {
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit().putBoolean(KEY_TIME_EDIT_UNLOCKED, unlocked).apply()
+        }
 
         private val manualFmt = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
 
@@ -81,6 +93,16 @@ class SettingsActivity : AppCompatActivity() {
         fun setWeatherEnabled(context: Context, enabled: Boolean) {
             context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                 .edit().putBoolean(KEY_SHOW_WEATHER, enabled).apply()
+        }
+
+        /** 是否在水印中显示经纬度坐标（默认开启） */
+        fun isCoordinateEnabled(context: Context): Boolean =
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .getBoolean(KEY_SHOW_COORDINATE, true)
+
+        fun setCoordinateEnabled(context: Context, enabled: Boolean) {
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit().putBoolean(KEY_SHOW_COORDINATE, enabled).apply()
         }
 
         /** 是否启用在线地名（天地图逆地理，默认开启）；关闭后点位库未命中时直接显示经纬度 */
@@ -116,6 +138,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var tvCustomCount: TextView
     private lateinit var llCustomList: LinearLayout
     private lateinit var tvCustomEmpty: TextView
+    private lateinit var tvAdvancedState: TextView
 
     private var creditTaps = 0
     private var lastTapAt = 0L
@@ -129,6 +152,8 @@ class SettingsActivity : AppCompatActivity() {
         tvCustomCount = findViewById(R.id.tv_custom_count)
         llCustomList = findViewById(R.id.ll_custom_list)
         tvCustomEmpty = findViewById(R.id.tv_custom_empty)
+        tvAdvancedState = findViewById(R.id.tv_advanced_state)
+        refreshAdvancedState()
 
         // 标题拆成两框显示：前两字（黄色标签）+ 其余（白色标题）
         val title = loadTitle(this)
@@ -144,6 +169,18 @@ class SettingsActivity : AppCompatActivity() {
             Toast.makeText(
                 this,
                 if (checked) "已在水印中显示天气" else "已关闭天气显示",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        // 经纬度坐标开关：控制水印卡片内是否显示系统真实 GPS 坐标
+        val swCoordinate = findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.sw_coordinate)
+        swCoordinate.isChecked = isCoordinateEnabled(this)
+        swCoordinate.setOnCheckedChangeListener { _, checked ->
+            setCoordinateEnabled(this, checked)
+            Toast.makeText(
+                this,
+                if (checked) "已显示经纬度坐标" else "已隐藏经纬度坐标",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -197,24 +234,33 @@ class SettingsActivity : AppCompatActivity() {
                 .show()
         }
 
-        // 彩蛋：版本说明中的"2025组团式援边工作队"连续点击 5 次（2 秒内连续）→ 解锁时间校准
+        // 隐藏功能模式开关（彩蛋）：版本说明连续点击 5 次（2 秒内连续）→ 开 / 关
+        //   开启：拍照页点击水印上的时间/日期可临时校准巡查时间；
+        //         点击位置名称可手动修改坐标、选择自定义位置（正常模式下只能改名）
+        //   关闭：一并清除已设置的临时校准时间，避免留下一个再也改不回来的假时间
         findViewById<TextView>(R.id.tv_credit).setOnClickListener {
             val now = SystemClock.elapsedRealtime()
             creditTaps = if (now - lastTapAt < 2000L) creditTaps + 1 else 1
             lastTapAt = now
             if (creditTaps >= 5) {
                 creditTaps = 0
-                if (!isTimeEditUnlocked(this)) {
-                    getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-                        .edit().putBoolean(KEY_TIME_EDIT_UNLOCKED, true).apply()
-                    Toast.makeText(
-                        this,
-                        "已解锁时间校准：在拍照页点击水印上的时间即可临时修改日期时间",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+                val turnOn = !isTimeEditUnlocked(this)
+                setTimeEditUnlocked(this, turnOn)
+                if (!turnOn) setManualDateTime(this, null)
+                refreshAdvancedState()
+                Toast.makeText(
+                    this,
+                    if (turnOn) "已开启隐藏功能模式：可临时校准时间、手动修改坐标与选择自定义位置；拍照页右下角出现「导入照片」图标"
+                    else "已退出隐藏功能模式：位置名称恢复为仅可改名，导入照片入口一并隐藏",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
+    }
+
+    /** 隐藏功能模式状态提示：仅在已开启时显示（连点上面的版本说明 5 次可退出） */
+    private fun refreshAdvancedState() {
+        tvAdvancedState.visibility = if (isTimeEditUnlocked(this)) View.VISIBLE else View.GONE
     }
 
     // ---- 自定义位置名列表 ----

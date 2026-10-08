@@ -128,6 +128,56 @@
                 android:layout_marginStart="8dp" />
         </LinearLayout>
 
+        <!-- 经纬度坐标显示开关 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="@string/settings_section_coordinate"
+            android:textColor="#666666"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edit_box"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_coordinate_label"
+                    android:textColor="#111111"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/settings_coordinate_hint"
+                    android:textColor="#888888"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/sw_coordinate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
         <!-- 在线地名（天地图逆地理，点位库未命中时兜底） -->
         <TextView
             android:layout_width="wrap_content"
@@ -271,6 +321,19 @@
             android:text="@string/version_info"
             android:textColor="#333333"
             android:textSize="14sp" />
+
+        <!-- 隐藏功能模式状态：仅在已开启时显示（连点上方版本说明 5 次可退出） -->
+        <TextView
+            android:id="@+id/tv_advanced_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_edit_box"
+            android:padding="10dp"
+            android:text="@string/settings_advanced_on"
+            android:textColor="#8A6A00"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
     </LinearLayout>
 </ScrollView>

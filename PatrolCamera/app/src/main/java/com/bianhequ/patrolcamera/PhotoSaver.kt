@@ -31,6 +31,12 @@ object PhotoSaver {
         return "PATROL_$ts.jpg"
     }
 
+    /** 导入照片（隐藏功能）的成片名：带 IMPORT 前缀，一眼看出不是相机直出 */
+    fun buildImportFileName(date: Date): String {
+        val ts = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(date)
+        return "PATROL_IMPORT_$ts.jpg"
+    }
+
     fun save(context: Context, bitmap: Bitmap, displayName: String): SavedPhoto {
         val resolver = context.contentResolver
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

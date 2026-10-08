@@ -6,6 +6,7 @@
     <string name="btn_shutter">拍照</string>
     <string name="btn_settings">设置</string>
     <string name="btn_refresh_location">刷新位置</string>
+    <string name="btn_import_photo">导入照片</string>
     <string name="wm_default_tag">巡检</string>
     <string name="wm_default_rest">工作记录</string>
     <string name="wm_placeholder_time">00:00</string>
@@ -21,6 +22,9 @@
     <string name="settings_section_weather">天气显示</string>
     <string name="settings_weather_label">在水印中显示天气</string>
     <string name="settings_weather_hint">在位置名称下方显示天气图标与气温，需联网获取；无网络时自动省略</string>
+    <string name="settings_section_coordinate">经纬度坐标</string>
+    <string name="settings_coordinate_label">在水印中显示经纬度坐标</string>
+    <string name="settings_coordinate_hint">在位置名称下方显示系统真实 GPS 坐标（纬度, 经度），未定位成功时不显示</string>
     <string name="settings_section_geo">在线地名（天地图）</string>
     <string name="settings_geo_label">点位未命中时联网获取地名</string>
     <string name="settings_geo_hint">调用天地图逆地理接口，需联网；无网络或失败时显示经纬度</string>
@@ -31,5 +35,6 @@
     <string name="corner_real_label">真实时间</string>
     <string name="corner_code_default">防伪码 --------</string>
     <string name="settings_section_about">版本说明</string>
-    <string name="version_info">巡查水印相机 v1.2.8\n绥芬河边境经济合作区管理局\n2025组团式援边工作队</string>
+    <string name="settings_advanced_on">隐藏功能模式已开启：可临时校准拍照时间、手动修改坐标、选择自定义位置、导入照片补录\n（连点上方版本说明 5 次可退出）</string>
+    <string name="version_info">巡查水印相机 v1.3.5\n绥芬河边境经济合作区管理局\n2025组团式援边绥芬河工作队</string>
 </resources>

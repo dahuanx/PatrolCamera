@@ -8,6 +8,7 @@
 - **点位匹配**：内置 51 个边合区巡查点位库，拍照时按 GPS 坐标自动匹配最近点位（WGS-84 坐标系，与手机 GPS 直配）
 - **自定义点位**：支持添加自定义巡查点位并本地保存
 - **逆地理编码**：根据坐标自动解析行政区划与地名描述
+- **经纬度坐标行**：水印中显示系统真实 GPS 坐标（纬度, 经度），可在设置页关闭
 - **在线地名（天地图）**：离线点位库未命中时，自动调用天地图逆地理接口把坐标换成真实地名
 - **天气信息**：拍摄时可叠加当前天气状况
 - **设置页**：支持个性化配置
@@ -28,12 +29,14 @@
 
 无需构建，直接在手机浏览器打开下面的链接下载安装即可（首次安装需允许"安装未知来源应用"）：
 
-**国内用户推荐（Gitee 直连，速度快）：[Gitee 下载 v1.2.8](https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.2.8/PatrolCamera-v1.2.8.apk)**
+**国内用户推荐（Gitee 直连，速度快）：[Gitee 下载 v1.3.5](https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.3.5/PatrolCamera-v1.3.5.apk)**
 
-**最新正式版：[v1.2.8](https://github.com/dahuanx/PatrolCamera/releases/latest)**
+**最新正式版：[v1.3.5](https://github.com/dahuanx/PatrolCamera/releases/latest)**
 
 | 版本 | 下载 | 说明 |
 |---|---|---|
+| v1.3.5 | [PatrolCamera-v1.3.5.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.3.5/PatrolCamera-v1.3.5.apk) | 拍照成功后新增成片缩略图飞入动画 |
+| v1.2.9 | [PatrolCamera-v1.2.9.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.9/PatrolCamera-v1.2.9.apk) | 水印新增经纬度坐标行，设置页可开关 |
 | v1.2.8 | [PatrolCamera-v1.2.8.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.8/PatrolCamera-v1.2.8.apk) | 在线地名自动加省、地市、县区三级行政区前缀 |
 | v1.2.7 | [PatrolCamera-v1.2.7.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.7/PatrolCamera-v1.2.7.apk) | 接入天地图在线地名，点位库未命中时自动解析真实地名 |
 | v1.2.6 | [PatrolCamera-v1.2.6.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.6/PatrolCamera-v1.2.6.apk) | 新增拍照页「刷新位置」按钮，支持强制重新定位 |
@@ -56,6 +59,8 @@
 
 | 版本 | 说明 |
 |---|---|
+| v1.3.5 | 拍照成功后屏幕中央浮现成片缩略图，边缩小边飞向右下角并淡出，直观提示已保存（不阻塞连拍） |
+| v1.2.9 | 水印新增经纬度坐标行（系统真实 GPS，纬度在前 6 位小数）；设置页新增「经纬度坐标」开关，默认开启；版本说明落款更新为「2025组团式援边绥芬河工作队」 |
 | v1.2.8 | 在线地名自动加「省＋地市＋县区」三级行政区前缀（如"黑龙江省牡丹江市绥芬河市 宽沟路 东南约282米"）；库内点位名保持原样不加前缀 |
 | v1.2.7 | 接入天地图在线地名（WGS-84 直传不转换）；地名智能清洗与距离分级；设置页新增「在线地名」开关与自定义 Key；同区域 20 分钟内缓存 |
 | v1.2.6 | 拍照页新增「刷新位置」按钮，可强制重新定位（丢弃旧缓存位置），2 秒冷却防连点 |
