@@ -11,6 +11,7 @@
 - **经纬度坐标行**：水印中显示系统真实 GPS 坐标（纬度, 经度），可在设置页关闭
 - **在线地名（天地图）**：离线点位库未命中时，自动调用天地图逆地理接口把坐标换成真实地名
 - **天气信息**：拍摄时可叠加当前天气状况
+- **软件内更新**：设置页可手动检查更新，启动时静默检查（一天最多一次）；发现新版在应用内下载（带进度），校验通过后自动调起系统安装器
 - **设置页**：支持个性化配置
 
 ## 技术信息
@@ -29,12 +30,15 @@
 
 无需构建，直接在手机浏览器打开下面的链接下载安装即可（首次安装需允许"安装未知来源应用"）：
 
-**国内用户推荐（Gitee 直连，速度快）：[Gitee 下载 v1.3.5](https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.3.5/PatrolCamera-v1.3.5.apk)**
+**国内用户推荐（Gitee 直连，速度快）：[Gitee 下载 v1.3.6](https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.3.6/PatrolCamera-v1.3.6.apk)**
 
-**最新正式版：[v1.3.5](https://github.com/dahuanx/PatrolCamera/releases/latest)**
+**最新正式版：[v1.3.6](https://github.com/dahuanx/PatrolCamera/releases/latest)**
+
+> **从 v1.3.6 起可以不用来这了**：App「设置 → 软件更新」里点一下「检查更新」即可在应用内下载安装；启动 App 时也会自动检查（一天最多一次）。
 
 | 版本 | 下载 | 说明 |
 |---|---|---|
+| v1.3.6 | [PatrolCamera-v1.3.6.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.3.6/PatrolCamera-v1.3.6.apk) | 新增软件内更新：应用内检查 / 下载 / 安装，安装包三重校验 |
 | v1.3.5 | [PatrolCamera-v1.3.5.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.3.5/PatrolCamera-v1.3.5.apk) | 拍照成功后新增成片缩略图飞入动画 |
 | v1.2.9 | [PatrolCamera-v1.2.9.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.9/PatrolCamera-v1.2.9.apk) | 水印新增经纬度坐标行，设置页可开关 |
 | v1.2.8 | [PatrolCamera-v1.2.8.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.8/PatrolCamera-v1.2.8.apk) | 在线地名自动加省、地市、县区三级行政区前缀 |
@@ -52,13 +56,43 @@
 ├── PatrolCamera/        # Android 工程源码
 │   ├── app/src/main/    # 应用代码与资源
 │   └── ...
+├── version.json         # ★ 更新清单：App「检查更新」读取的文件，发新版时必须同步更新
+├── tools/
+│   └── gen_version_json.py  # 生成 version.json（自动算体积与 SHA-256）
 └── APK/                 # 各版本成品 APK（不进 Git，统一走 Releases 发布）
 ```
+
+## 发布新版本（含 App 内更新清单）
+
+App 每次发布新版本时，除上传 APK 外，**必须同步更新仓库根目录的 `version.json`**，否则应用内更新会提示"检查失败"。
+
+```bash
+# 1) 生成更新清单（在仓库根目录执行）
+python tools/gen_version_json.py 27 1.3.6 "APK/巡查水印相机-v1.3.6-正式版.apk" notes.txt
+
+# 2) 发布 Release：附件名必须是 PatrolCamera-v1.3.6.apk（Gitee 与 GitHub 保持一致）
+
+# 3) 推送清单（两个源都要推，App 按 Gitee → GitHub 顺序读取）
+#    Gitee 分支：master　　GitHub 分支：main
+```
+
+`notes.txt` 的每一行就是弹窗里"更新内容"的一行。清单字段说明：
+
+| 字段 | 含义 |
+|---|---|
+| `versionCode` | 权威版本依据（整数）。App 用它与自身 `BuildConfig.VERSION_CODE` 比较，**不要**指望 versionName 字符串比较 |
+| `versionName` | 展示用版本号 |
+| `minVersionCode` | 低于该版本强制更新；默认 `0` 表示不强制 |
+| `force` | `true` 时显式强制（用户不能"稍后再说"） |
+| `url` / `urlBackup` | 下载地址（Gitee 优先，GitHub 兜底） |
+| `size` / `sha256` | App 下载后校验用；两项与包内 versionCode 共同构成三重校验 |
+| `notes` | 更新说明，直接显示在更新弹窗里 |
 
 ## 版本记录
 
 | 版本 | 说明 |
 |---|---|
+| v1.3.6 | 新增**软件内更新**：设置页「检查更新」+ 启动静默检查（一天一次）；应用内下载并调起系统安装器；安装包做体积 / SHA-256 / 包内版本号三重校验 |
 | v1.3.5 | 拍照成功后屏幕中央浮现成片缩略图，边缩小边飞向右下角并淡出，直观提示已保存（不阻塞连拍） |
 | v1.2.9 | 水印新增经纬度坐标行（系统真实 GPS，纬度在前 6 位小数）；设置页新增「经纬度坐标」开关，默认开启；版本说明落款更新为「2025组团式援边绥芬河工作队」 |
 | v1.2.8 | 在线地名自动加「省＋地市＋县区」三级行政区前缀（如"黑龙江省牡丹江市绥芬河市 宽沟路 东南约282米"）；库内点位名保持原样不加前缀 |

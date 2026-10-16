@@ -11,8 +11,8 @@ android {
         applicationId = "com.bianhequ.patrolcamera"
         minSdk = 26
         targetSdk = 34
-        versionCode = 26
-        versionName = "1.3.5"
+        versionCode = 27
+        versionName = "1.3.6"
     }
 
     signingConfigs {

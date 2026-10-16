@@ -72,6 +72,8 @@ import java.util.concurrent.Executors
  *     可临时校准巡查时间（仅影响水印显示与照片水印，文件名仍用系统真实时间）
  *   - 隐藏功能模式开启时，右下角"真实时间"上方多出一个**导入照片图标**：从相册选一张已有照片，
  *     按**当前设定的时间与位置**补上水印（横版 / 竖版自动识别），另存为新照片，原图不动
+ *   - 软件内更新：启动时静默检查新版本（一天最多一次），发现新版弹窗 → 应用内下载 → 交系统安装器；
+ *     设置页另有「检查更新」手动入口
  */
 class MainActivity : AppCompatActivity() {
 
@@ -259,6 +261,7 @@ class MainActivity : AppCompatActivity() {
         syncWeatherVisibility()
         syncAdvancedVisibility()   // "导入照片"入口只在隐藏功能模式下显示
         requestPermissionsAndStart()
+        autoCheckUpdate()          // 启动静默检查新版本（一天最多一次）
     }
 
     override fun onResume() {
@@ -270,6 +273,8 @@ class MainActivity : AppCompatActivity() {
         // 隐藏功能模式已被关掉时，手填坐标 / 自定义位置不再允许生效，回到真实 GPS 与自动地名
         if (!SettingsActivity.isTimeEditUnlocked(this)) clearManualOverride()
         updateCoordinate(gps.state.value)   // 坐标开关可能在设置页被改动
+        // 从"允许安装未知应用"授权页返回时，自动续上已下载好的更新包安装
+        UpdateUi.resumePendingInstall(this)
         if (gps.hasPermission()) gps.start()
     }
 
@@ -282,6 +287,21 @@ class MainActivity : AppCompatActivity() {
         cameraExecutor.shutdown()
         shutterSound?.release()
         super.onDestroy()
+    }
+
+    // ---- 软件内更新 ----
+
+    /**
+     * 启动静默检查新版本：一天最多真正联网一次；只在发现新版时弹窗，失败完全静默。
+     * 延迟 3 秒是为了让首屏取景先就位，避免一进 App 就被弹窗挡住。
+     */
+    private fun autoCheckUpdate() {
+        if (!UpdateChecker.shouldAutoCheck(this)) return
+        UpdateChecker.markChecked(this)   // 先记录，断网时也不至于每次启动都白等一次超时
+        lifecycleScope.launch {
+            delay(3000)
+            UpdateUi.checkAndPrompt(this@MainActivity, manual = false)
+        }
     }
 
     // ---- 标题（设置中可编辑） ----

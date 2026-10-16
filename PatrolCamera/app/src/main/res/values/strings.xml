@@ -36,5 +36,9 @@
     <string name="corner_code_default">防伪码 --------</string>
     <string name="settings_section_about">版本说明</string>
     <string name="settings_advanced_on">隐藏功能模式已开启：可临时校准拍照时间、手动修改坐标、选择自定义位置、导入照片补录\n（连点上方版本说明 5 次可退出）</string>
-    <string name="version_info">巡查水印相机 v1.3.5\n绥芬河边境经济合作区管理局\n2025组团式援边绥芬河工作队</string>
+    <string name="version_info">巡查水印相机 v1.3.6\n绥芬河边境经济合作区管理局\n2025组团式援边绥芬河工作队</string>
+
+    <string name="settings_section_update">软件更新</string>
+    <string name="settings_check_update">检查更新</string>
+    <string name="settings_update_hint">在应用内检查、下载并安装新版本；下载完成后需在系统提示中允许"安装未知应用"</string>
 </resources>

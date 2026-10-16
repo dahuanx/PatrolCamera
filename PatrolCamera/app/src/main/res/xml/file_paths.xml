@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  软件内更新的安装包路径映射。
+  下载目录 = getExternalFilesDir(null)/update（应用外部私有目录，免存储权限）。
+  走 FileProvider 而非 file://，否则 Android 7.0+ 会直接抛 FileUriExposedException。
+-->
+<paths>
+    <external-files-path name="update" path="update/" />
+    <!-- 兜底：个别设备取不到外部目录时，下载会落到内部 filesDir/update -->
+    <files-path name="update_internal" path="update/" />
+</paths>

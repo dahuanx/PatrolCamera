@@ -34,6 +34,8 @@ import java.util.Locale
  *              ② 点击位置名称可手动填写 / 修改坐标、选择自定义位置（正常模式下只能改名，改不了坐标）；
  *              ③ 拍照页右下角"真实时间"上方出现「导入照片」图标，可给相册里已有的照片按当前设定补上水印；
  *      关闭时：一并清除已设置的临时校准时间，并放弃手填坐标 / 自定义位置
+ *   7. 软件更新：应用内检查新版本 → 下载（带进度）→ 三重校验 → 交系统安装器覆盖安装。
+ *      拍照页启动时也会静默检查（一天最多一次）
  */
 class SettingsActivity : AppCompatActivity() {
 
@@ -140,6 +142,9 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var tvCustomEmpty: TextView
     private lateinit var tvAdvancedState: TextView
 
+    /** 软件更新区块：当前版本 / 检查结果 */
+    private lateinit var tvUpdateState: TextView
+
     private var creditTaps = 0
     private var lastTapAt = 0L
 
@@ -234,6 +239,14 @@ class SettingsActivity : AppCompatActivity() {
                 .show()
         }
 
+        // 软件更新：应用内检查 / 下载 / 安装
+        tvUpdateState = findViewById(R.id.tv_update_state)
+        tvUpdateState.text = "当前版本 v" + BuildConfig.VERSION_NAME +
+            "（版本号 " + BuildConfig.VERSION_CODE + "）"
+        findViewById<Button>(R.id.btn_check_update).setOnClickListener {
+            UpdateUi.checkAndPrompt(this, manual = true)
+        }
+
         // 隐藏功能模式开关（彩蛋）：版本说明连续点击 5 次（2 秒内连续）→ 开 / 关
         //   开启：拍照页点击水印上的时间/日期可临时校准巡查时间；
         //         点击位置名称可手动修改坐标、选择自定义位置（正常模式下只能改名）
@@ -256,6 +269,12 @@ class SettingsActivity : AppCompatActivity() {
                 ).show()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 从"允许安装未知应用"授权页返回时，自动续上已下载好的更新包安装
+        UpdateUi.resumePendingInstall(this)
     }
 
     /** 隐藏功能模式状态提示：仅在已开启时显示（连点上面的版本说明 5 次可退出） */
