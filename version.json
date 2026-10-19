@@ -1,12 +1,12 @@
 {
-  "versionCode": 30,
-  "versionName": "1.3.9",
+  "versionCode": 31,
+  "versionName": "1.3.10",
   "minVersionCode": 0,
   "force": false,
-  "url": "https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.3.9/PatrolCamera-v1.3.9.apk",
-  "urlBackup": "https://github.com/dahuanx/PatrolCamera/releases/download/v1.3.9/PatrolCamera-v1.3.9.apk",
-  "size": 3309355,
-  "sha256": "247d6774b4074a0f9d8977cc52861ac7ba838607d147bcee40e6af018fb7e750",
-  "notes": "1. 设置页「版本说明」里的版本号改为自动跟随安装包，不再写死（之前停在 1.3.7）。\n2. 发送的下载链接改为安装包直链：在浏览器里点开即开始下载，不再先进发布页找附件。\n3. 分享说明补齐微信的限制：链接在微信里直接点下载不了，要点右上角「…」→「在浏览器打开」。\n4. 直接发安装包时附上安装步骤：微信可能给文件名加 .1，需改名后再装；首次安装需允许「安装未知应用」，部分手机还会联网做安全检测。",
+  "url": "https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.3.10/PatrolCamera-v1.3.10.apk",
+  "urlBackup": "https://github.com/dahuanx/PatrolCamera/releases/download/v1.3.10/PatrolCamera-v1.3.10.apk",
+  "size": 3310679,
+  "sha256": "1b1cb27043bd34b11a7a8758ec6a847db42adfcab8b7e032443cbf83a48af36f",
+  "notes": "紧急修复：前两版（1.3.8 / 1.3.9）编译时源码目录同步出错，安装包装进去的其实还是 1.3.7 的界面，所以版本说明一直显示 1.3.7、分享对话框也看不到微信提示。本次已修正同步方式并逐项核对包内实际内容。\n1. 设置页「版本说明」的版本号改为自动读取安装包版本，不再写死。\n2. 分享对话框：两个整行按钮（发送安装包 / 发送下载链接）+ 微信注意事项提示块。\n3. 下载链接改为安装包直链，浏览器点开即下载；微信里需点右上角「…」→「在浏览器打开」。\n4. 发安装包时附安装步骤：微信可能给文件名加 .1，需改名后再装；首次安装需允许「安装未知应用」。",
   "publishedAt": "2026-10-19"
 }
