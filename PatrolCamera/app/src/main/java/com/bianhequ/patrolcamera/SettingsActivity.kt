@@ -298,23 +298,34 @@ class SettingsActivity : AppCompatActivity() {
      * 两种分享方式，让洲哥按对方情况选：
      *   ① 发安装包：不依赖网络，版本与本人完全一致，走微信 / QQ 的文件通道；
      *   ② 发下载链接：微信对 .apk 文件时有限制，改用发布页最稳，对方还能拿到最新版。
+     *
+     * v1.3.8：原来用 setItems() + setMessage()，部分机型上列表项高度算成 0，
+     * 只剩「取消」可点、根本选不了分享方式。改成自定义布局，两个选项是明确的整行按钮。
      */
     private fun showShareAppDialog() {
-        AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.dialog_share_app, null)
+        view.findViewById<TextView>(R.id.tv_share_desc).text =
+            "把巡查水印相机 v" + BuildConfig.VERSION_NAME + " 转给同事安装。\n" +
+                "安装包约 " + apkSizeMb() + " MB；对方安装时需允许「安装未知应用」。"
+
+        val dialog = AlertDialog.Builder(this)
             .setTitle("分享本软件")
-            .setMessage(
-                "把巡查水印相机 v${BuildConfig.VERSION_NAME} 转给同事安装。\n" +
-                    "安装包约 ${apkSizeMb()} MB；对方安装时需允许「安装未知应用」。"
-            )
-            .setItems(arrayOf("发送安装包（APK 文件）", "发送下载链接")) { _, which ->
-                if (which == 0) shareApkFile() else {
-                    if (!AppShare.shareLink(this)) {
-                        Toast.makeText(this, "没有找到可用的分享应用", Toast.LENGTH_SHORT).show()
-                    }
-                }
+            .setView(view)
+            .create()
+
+        view.findViewById<View>(R.id.option_share_apk).setOnClickListener {
+            dialog.dismiss()
+            shareApkFile()
+        }
+        view.findViewById<View>(R.id.option_share_link).setOnClickListener {
+            dialog.dismiss()
+            if (!AppShare.shareLink(this)) {
+                Toast.makeText(this, "没有找到可用的分享应用", Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("取消", null)
-            .show()
+        }
+        view.findViewById<View>(R.id.btn_share_cancel).setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
     }
 
     /** 安装包体积（MB，保留一位小数）：读本机已安装 APK 的大小 */

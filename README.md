@@ -31,14 +31,15 @@
 
 无需构建，直接在手机浏览器打开下面的链接下载安装即可（首次安装需允许"安装未知来源应用"）：
 
-**国内用户推荐（Gitee 直连，速度快）：[Gitee 下载 v1.3.7](https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.3.7/PatrolCamera-v1.3.7.apk)**
+**国内用户推荐（Gitee 直连，速度快）：[Gitee 下载 v1.3.8](https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.3.8/PatrolCamera-v1.3.8.apk)**
 
-**最新正式版：[v1.3.7](https://github.com/dahuanx/PatrolCamera/releases/latest)**
+**最新正式版：[v1.3.8](https://github.com/dahuanx/PatrolCamera/releases/latest)**
 
 > **从 v1.3.6 起可以不用来这了**：App「设置 → 软件更新」里点一下「检查更新」即可在应用内下载安装；启动 App 时也会自动检查（一天最多一次）。
 
 | 版本 | 下载 | 说明 |
 |---|---|---|
+| v1.3.8 | [PatrolCamera-v1.3.8.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.3.8/PatrolCamera-v1.3.8.apk) | 修复「分享本软件」对话框只有取消按钮、选不了分享方式的问题 |
 | v1.3.7 | [PatrolCamera-v1.3.7.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.3.7/PatrolCamera-v1.3.7.apk) | 新增「分享本软件」：可把本机安装包直接发给同事，或发送下载链接 |
 | v1.3.5 | [PatrolCamera-v1.3.5.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.3.5/PatrolCamera-v1.3.5.apk) | 拍照成功后新增成片缩略图飞入动画 |
 | v1.2.9 | [PatrolCamera-v1.2.9.apk](https://github.com/dahuanx/PatrolCamera/releases/download/v1.2.9/PatrolCamera-v1.2.9.apk) | 水印新增经纬度坐标行，设置页可开关 |
@@ -69,9 +70,9 @@ App 每次发布新版本时，除上传 APK 外，**必须同步更新仓库根
 
 ```bash
 # 1) 生成更新清单（在仓库根目录执行）
-python tools/gen_version_json.py 28 1.3.7 "APK/巡查水印相机-v1.3.7-正式版.apk" notes.txt
+python tools/gen_version_json.py 29 1.3.8 "APK/巡查水印相机-v1.3.8-正式版.apk" notes.txt
 
-# 2) 发布 Release：附件名必须是 PatrolCamera-v1.3.7.apk（Gitee 与 GitHub 保持一致）
+# 2) 发布 Release：附件名必须是 PatrolCamera-v1.3.8.apk（Gitee 与 GitHub 保持一致）
 
 # 3) 推送清单（两个源都要推，App 按 Gitee → GitHub 顺序读取）
 #    Gitee 分支：master　　GitHub 分支：main
@@ -93,6 +94,7 @@ python tools/gen_version_json.py 28 1.3.7 "APK/巡查水印相机-v1.3.7-正式�
 
 | 版本 | 说明 |
 |---|---|
+| v1.3.8 | 修复**分享对话框无确认按钮**：原用列表项承载两个分享方式，部分机型上列表高度算成 0，只剩「取消」；改为自定义布局，两个选项为明确的整行按钮 |
 | v1.3.7 | 新增**分享本软件**：设置页可把本机安装包直接发给同事（不依赖网络、版本与分享者完全一致），或发送下载链接；微信限制 .apk 时用链接方式兜底 |
 | v1.3.6 | 新增**软件内更新**：设置页「检查更新」+ 启动静默检查（一天一次）；应用内下载并调起系统安装器；安装包做体积 / SHA-256 / 包内版本号三重校验 |
 | v1.3.5 | 拍照成功后屏幕中央浮现成片缩略图，边缩小边飞向右下角并淡出，直观提示已保存（不阻塞连拍） |

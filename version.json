@@ -1,12 +1,12 @@
 {
-  "versionCode": 28,
-  "versionName": "1.3.7",
+  "versionCode": 29,
+  "versionName": "1.3.8",
   "minVersionCode": 0,
   "force": false,
-  "url": "https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.3.7/PatrolCamera-v1.3.7.apk",
-  "urlBackup": "https://github.com/dahuanx/PatrolCamera/releases/download/v1.3.7/PatrolCamera-v1.3.7.apk",
-  "size": 3304291,
-  "sha256": "d5d85e7554639fd039179c466594b7bce97a3f7fea5afd5e6a9bb4afe5804e23",
-  "notes": "1. 新增「分享本软件」：设置页最下方可把本机这一版安装包直接发给同事，或发送下载链接。\n2. 发送安装包不依赖网络，版本与分享者完全一致，文件名带版本号。\n3. 微信对 .apk 有限制时，可改用「发送下载链接」，对方拿到最新版。\n4. 读不到安装包时自动回退发送下载链接，不影响其它功能。",
+  "url": "https://gitee.com/dahuanxx/PatrolCamera/releases/download/v1.3.8/PatrolCamera-v1.3.8.apk",
+  "urlBackup": "https://github.com/dahuanx/PatrolCamera/releases/download/v1.3.8/PatrolCamera-v1.3.8.apk",
+  "size": 3309355,
+  "sha256": "a205de31a0b04dcdc2472f70a487861767fa851645aec6140e2038b35148f4c3",
+  "notes": "1. 修复「分享本软件」对话框只有「取消」按钮、选不了分享方式的问题（部分机型上选项列表高度算成 0）。\n2. 分享方式改成两个明确的按钮：「发送安装包」和「发送下载链接」，各带一行说明。\n3. 其它功能与 v1.3.7 一致。",
   "publishedAt": "2026-10-19"
 }

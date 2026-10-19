@@ -45,4 +45,9 @@
     <string name="settings_section_share">分享本软件</string>
     <string name="settings_share_app">分享给同事安装</string>
     <string name="settings_share_hint">可把当前版本的安装包（APK）直接发到微信 / QQ，也可发下载链接让对方自己下载；对方安装时需允许"安装未知应用"</string>
+    <string name="share_option_apk">发送安装包</string>
+    <string name="share_option_apk_desc">不依赖网络，版本与你完全一致</string>
+    <string name="share_option_link">发送下载链接</string>
+    <string name="share_option_link_desc">微信限制 .apk 时用这个，对方拿到最新版</string>
+    <string name="share_cancel">取消</string>
 </resources>
