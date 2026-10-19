@@ -24,9 +24,18 @@ object AppShare {
     private const val TAG = "AppShare"
     private const val DIR = "share"
 
-    /** 下载页：国内优先 Gitee，GitHub 作备用 */
-    private const val GITEE_URL = "https://gitee.com/dahuanxx/PatrolCamera/releases/latest"
-    private const val GITHUB_URL = "https://github.com/dahuanx/PatrolCamera/releases/latest"
+    /**
+     * 下载地址用**安装包直链**，不是发布页。
+     * 发发布页（releases/latest）对方还要在页面里再找一次附件，多一步就多一批装不上的人；
+     * 直链在浏览器里点开即下载（Gitee 会 302 到附件 CDN，最终直接吐出 apk 文件）。
+     */
+    private fun apkUrlGitee(): String =
+        "https://gitee.com/dahuanxx/PatrolCamera/releases/download/v${BuildConfig.VERSION_NAME}" +
+            "/PatrolCamera-v${BuildConfig.VERSION_NAME}.apk"
+
+    private fun apkUrlGithub(): String =
+        "https://github.com/dahuanx/PatrolCamera/releases/download/v${BuildConfig.VERSION_NAME}" +
+            "/PatrolCamera-v${BuildConfig.VERSION_NAME}.apk"
 
     private const val MIME_APK = "application/vnd.android.package-archive"
 
@@ -76,19 +85,27 @@ object AppShare {
             type = MIME_APK
             putExtra(Intent.EXTRA_STREAM, uri)
             putExtra(Intent.EXTRA_SUBJECT, apkName())
+            // 随文件附一段说明：微信可能把文件名改成 xxx.apk.1、或提示无法打开，
+            // 对方按这段话就能自己装上（部分客户端只保留文件、不显示这段文字，属正常）
+            putExtra(Intent.EXTRA_TEXT, apkTips())
             clipData = ClipData.newRawUri(apkName(), uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         return startChooser(context, send)
     }
 
-    /** 发送下载链接（纯文本） */
+    /** 发送下载链接（纯文本）：直链 + 微信里必须用浏览器打开的说明 */
     fun shareLink(context: Context): Boolean {
         val text = buildString {
-            append("巡查水印相机 v").append(BuildConfig.VERSION_NAME).append("（安卓）\n")
-            append("下载安装：").append(GITEE_URL).append('\n')
-            append("备用地址：").append(GITHUB_URL).append('\n')
-            append("安装时如提示「未知来源」，允许一次即可。")
+            append("巡查水印相机 v").append(BuildConfig.VERSION_NAME).append("（安卓）安装包：\n")
+            append(apkUrlGitee()).append("\n\n")
+            append("安装方法：\n")
+            append("1. 在微信里直接点链接是下不了的，请点右上角「…」→「在浏览器打开」，")
+            append("浏览器会直接下载安装包（不会跳到下载页）。\n")
+            append("2. 下载完点开安装，首次安装需允许「安装未知应用」；")
+            append("部分手机会联网做安全检测，按提示继续即可。\n\n")
+            append("备用地址（国内可能打不开）：\n")
+            append(apkUrlGithub())
         }
         val send = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
@@ -96,6 +113,15 @@ object AppShare {
             putExtra(Intent.EXTRA_TEXT, text)
         }
         return startChooser(context, send)
+    }
+
+    /** 发安装包时附带的说明：专治微信改名 .apk.1 与"无法打开" */
+    private fun apkTips(): String = buildString {
+        append("巡查水印相机 v").append(BuildConfig.VERSION_NAME).append(" 安装包（apk）\n")
+        append("如果微信里点开提示无法打开、或文件名变成 xxx.apk.1：\n")
+        append("① 点文件右上角「…」→「用其他应用打开」，选「文件管理」或「安装器」；\n")
+        append("② 还是不行就到「文件管理」→ 微信下载目录，把文件名末尾的 .1 删掉（改成 xxx.apk）再安装；\n")
+        append("③ 首次安装需允许「安装未知应用」，部分手机会联网做安全检测，按提示继续即可。")
     }
 
     private fun startChooser(context: Context, send: Intent): Boolean {

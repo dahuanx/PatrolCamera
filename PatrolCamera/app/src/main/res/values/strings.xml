@@ -36,7 +36,7 @@
     <string name="corner_code_default">防伪码 --------</string>
     <string name="settings_section_about">版本说明</string>
     <string name="settings_advanced_on">隐藏功能模式已开启：可临时校准拍照时间、手动修改坐标、选择自定义位置、导入照片补录\n（连点上方版本说明 5 次可退出）</string>
-    <string name="version_info">巡查水印相机 v1.3.7\n绥芬河边境经济合作区管理局\n2025组团式援边绥芬河工作队</string>
+    <string name="version_info">巡查水印相机 v%1$s\n绥芬河边境经济合作区管理局\n2025组团式援边绥芬河工作队</string>
 
     <string name="settings_section_update">软件更新</string>
     <string name="settings_check_update">检查更新</string>
@@ -48,6 +48,7 @@
     <string name="share_option_apk">发送安装包</string>
     <string name="share_option_apk_desc">不依赖网络，版本与你完全一致</string>
     <string name="share_option_link">发送下载链接</string>
-    <string name="share_option_link_desc">微信限制 .apk 时用这个，对方拿到最新版</string>
+    <string name="share_option_link_desc">不占流量，对方拿到的一定是最新版</string>
     <string name="share_cancel">取消</string>
+    <string name="share_wechat_tip">微信里要注意：\n1. 发链接：对方直接点开下不了，需点右上角「…」→「在浏览器打开」，浏览器会直接下载安装包。\n2. 发安装包：微信可能给文件名末尾加上 .1，对方需到「文件管理」里改名去掉 .1 再安装；首次安装需允许「安装未知应用」，部分手机会联网做安全检测，按提示继续即可。</string>
 </resources>

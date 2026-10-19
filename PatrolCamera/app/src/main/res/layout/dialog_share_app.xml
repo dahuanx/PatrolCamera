@@ -1,124 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  分享本软件对话框（v1.3.8）
+  分享本软件对话框（v1.3.8 起自定义布局；v1.3.9 增加微信注意事项）
   原来用 AlertDialog.setItems() + setMessage() 组合，在部分机型上列表项高度塌陷为 0，
   只剩「取消」按钮可见、无法选择分享方式。改为自定义布局，两项做成明确的大按钮，
   深色对话框背景下文字为白色，不依赖系统列表项的主题配色。
+  v1.3.9：微信对链接与 apk 文件都有拦截（链接打不开下载、文件名被加 .1），
+  在对话框里直接把注意事项写清楚，免得发给同事后对方装不上还得来回问。
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingStart="20dp"
-    android:paddingTop="4dp"
-    android:paddingEnd="20dp"
-    android:paddingBottom="8dp">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_share_desc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:lineSpacingExtra="3dp"
-        android:textColor="#B3FFFFFF"
-        android:textSize="13sp" />
-
-    <!-- 方式一：直接发安装包 -->
     <LinearLayout
-        android:id="@+id/option_share_apk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:background="@drawable/bg_dialog_option"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="14dp">
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="8dp">
 
-        <ImageView
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:contentDescription="@string/share_option_apk"
-            android:src="@drawable/ic_share_apk" />
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tv_share_desc"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:lineSpacingExtra="3dp"
+            android:textColor="#B3FFFFFF"
+            android:textSize="13sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/share_option_apk"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:lineSpacingExtra="2dp"
-                android:text="@string/share_option_apk_desc"
-                android:textColor="#99FFFFFF"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- 方式二：发下载链接 -->
-    <LinearLayout
-        android:id="@+id/option_share_link"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_dialog_option"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="14dp">
-
-        <ImageView
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:contentDescription="@string/share_option_link"
-            android:src="@drawable/ic_share_link" />
-
+        <!-- 方式一：直接发安装包 -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/option_share_apk"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_dialog_option"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/share_option_link"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp" />
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:contentDescription="@string/share_option_apk"
+                android:src="@drawable/ic_share_apk" />
 
-            <TextView
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:lineSpacingExtra="2dp"
-                android:text="@string/share_option_link_desc"
-                android:textColor="#99FFFFFF"
-                android:textSize="12sp" />
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/share_option_apk"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/share_option_apk_desc"
+                    android:textColor="#99FFFFFF"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
+
+        <!-- 方式二：发下载链接 -->
+        <LinearLayout
+            android:id="@+id/option_share_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_dialog_option"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:contentDescription="@string/share_option_link"
+                android:src="@drawable/ic_share_link" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/share_option_link"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/share_option_link_desc"
+                    android:textColor="#99FFFFFF"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 微信注意事项：对方收到后怎么才能装上 -->
+        <TextView
+            android:id="@+id/tv_share_tip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_dialog_tip"
+            android:lineSpacingExtra="3dp"
+            android:padding="12dp"
+            android:text="@string/share_wechat_tip"
+            android:textColor="#B3FFFFFF"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/btn_share_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="@string/share_cancel"
+            android:textColor="#99FFFFFF"
+            android:textSize="14sp" />
+
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/btn_share_cancel"
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:layout_marginTop="10dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center"
-        android:text="@string/share_cancel"
-        android:textColor="#99FFFFFF"
-        android:textSize="14sp" />
-
-</LinearLayout>
+</ScrollView>

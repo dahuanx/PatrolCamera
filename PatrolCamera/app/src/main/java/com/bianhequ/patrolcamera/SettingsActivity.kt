@@ -257,6 +257,10 @@ class SettingsActivity : AppCompatActivity() {
         // 分享本软件：发送安装包 或 发送下载链接
         findViewById<Button>(R.id.btn_share_app).setOnClickListener { showShareAppDialog() }
 
+        // 版本说明里的版本号跟随编译产物（v1.3.9 起不再硬编码在 strings 里，免得每版都忘改）
+        findViewById<TextView>(R.id.tv_credit).text =
+            getString(R.string.version_info, BuildConfig.VERSION_NAME)
+
         // 隐藏功能模式开关（彩蛋）：版本说明连续点击 5 次（2 秒内连续）→ 开 / 关
         //   开启：拍照页点击水印上的时间/日期可临时校准巡查时间；
         //         点击位置名称可手动修改坐标、选择自定义位置（正常模式下只能改名）
@@ -305,8 +309,8 @@ class SettingsActivity : AppCompatActivity() {
     private fun showShareAppDialog() {
         val view = layoutInflater.inflate(R.layout.dialog_share_app, null)
         view.findViewById<TextView>(R.id.tv_share_desc).text =
-            "把巡查水印相机 v" + BuildConfig.VERSION_NAME + " 转给同事安装。\n" +
-                "安装包约 " + apkSizeMb() + " MB；对方安装时需允许「安装未知应用」。"
+            "把巡查水印相机 v" + BuildConfig.VERSION_NAME + " 转给同事安装，安装包约 " +
+                apkSizeMb() + " MB。\n微信对下载链接和 apk 文件都有拦截，发给对方后按下方说明操作。"
 
         val dialog = AlertDialog.Builder(this)
             .setTitle("分享本软件")

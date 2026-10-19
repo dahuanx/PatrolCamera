@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 微信注意事项提示块：比选项卡片更暗一档，作为"附注"而不是可点区域 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#12FFFFFF" />
+    <corners android:radius="8dp" />
+</shape>
