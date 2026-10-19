@@ -8,4 +8,6 @@
     <external-files-path name="update" path="update/" />
     <!-- 兜底：个别设备取不到外部目录时，下载会落到内部 filesDir/update -->
     <files-path name="update_internal" path="update/" />
+    <!-- 分享本软件：把已安装的 APK 复制到 cache/share 后以 content:// 交给微信等应用 -->
+    <cache-path name="share" path="share/" />
 </paths>

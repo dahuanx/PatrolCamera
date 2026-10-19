@@ -17,6 +17,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -36,6 +40,7 @@ import java.util.Locale
  *      关闭时：一并清除已设置的临时校准时间，并放弃手填坐标 / 自定义位置
  *   7. 软件更新：应用内检查新版本 → 下载（带进度）→ 三重校验 → 交系统安装器覆盖安装。
  *      拍照页启动时也会静默检查（一天最多一次）
+ *   8. 分享本软件：把本机这一版安装包（APK）直接发给同事，或发下载链接让对方自己下载
  */
 class SettingsActivity : AppCompatActivity() {
 
@@ -147,6 +152,8 @@ class SettingsActivity : AppCompatActivity() {
 
     private var creditTaps = 0
     private var lastTapAt = 0L
+    /** 正在准备分享用的安装包（避免连点重复复制 3 MB 文件） */
+    private var sharingApp = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -247,6 +254,9 @@ class SettingsActivity : AppCompatActivity() {
             UpdateUi.checkAndPrompt(this, manual = true)
         }
 
+        // 分享本软件：发送安装包 或 发送下载链接
+        findViewById<Button>(R.id.btn_share_app).setOnClickListener { showShareAppDialog() }
+
         // 隐藏功能模式开关（彩蛋）：版本说明连续点击 5 次（2 秒内连续）→ 开 / 关
         //   开启：拍照页点击水印上的时间/日期可临时校准巡查时间；
         //         点击位置名称可手动修改坐标、选择自定义位置（正常模式下只能改名）
@@ -280,6 +290,64 @@ class SettingsActivity : AppCompatActivity() {
     /** 隐藏功能模式状态提示：仅在已开启时显示（连点上面的版本说明 5 次可退出） */
     private fun refreshAdvancedState() {
         tvAdvancedState.visibility = if (isTimeEditUnlocked(this)) View.VISIBLE else View.GONE
+    }
+
+    // ---- 分享本软件 ----
+
+    /**
+     * 两种分享方式，让洲哥按对方情况选：
+     *   ① 发安装包：不依赖网络，版本与本人完全一致，走微信 / QQ 的文件通道；
+     *   ② 发下载链接：微信对 .apk 文件时有限制，改用发布页最稳，对方还能拿到最新版。
+     */
+    private fun showShareAppDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("分享本软件")
+            .setMessage(
+                "把巡查水印相机 v${BuildConfig.VERSION_NAME} 转给同事安装。\n" +
+                    "安装包约 ${apkSizeMb()} MB；对方安装时需允许「安装未知应用」。"
+            )
+            .setItems(arrayOf("发送安装包（APK 文件）", "发送下载链接")) { _, which ->
+                if (which == 0) shareApkFile() else {
+                    if (!AppShare.shareLink(this)) {
+                        Toast.makeText(this, "没有找到可用的分享应用", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    /** 安装包体积（MB，保留一位小数）：读本机已安装 APK 的大小 */
+    private fun apkSizeMb(): String {
+        val len = try {
+            java.io.File(applicationInfo.sourceDir ?: "").length()
+        } catch (e: Exception) {
+            0L
+        }
+        return if (len > 0) String.format(Locale.CHINA, "%.1f", len / 1024.0 / 1024.0) else "3.3"
+    }
+
+    /** 复制本机安装包到 cache 后调系统分享面板（复制在 IO 线程，避免卡界面） */
+    private fun shareApkFile() {
+        if (sharingApp) return
+        sharingApp = true
+        Toast.makeText(this, "正在准备安装包…", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            val uri = withContext(Dispatchers.IO) { AppShare.prepareApkUri(this@SettingsActivity) }
+            sharingApp = false
+            if (uri == null) {
+                Toast.makeText(
+                    this@SettingsActivity,
+                    "读取安装包失败，改为发送下载链接",
+                    Toast.LENGTH_LONG
+                ).show()
+                AppShare.shareLink(this@SettingsActivity)
+                return@launch
+            }
+            if (!AppShare.shareApk(this@SettingsActivity, uri)) {
+                Toast.makeText(this@SettingsActivity, "没有找到可用的分享应用", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     // ---- 自定义位置名列表 ----
